@@ -27,6 +27,14 @@ public class Board {
         board[row][col] = pawn;
     }
 
+    public void movePawn(int fromRow, int fromCol, int toRow, int toCol) {
+        Pawn pawn = getPawn(fromRow, fromCol);
+        setPawn(toRow, toCol, pawn);
+        setPawn(fromRow, fromCol, null);
+    }
+
+
+
     public int getRows() {
         return rows;
     }

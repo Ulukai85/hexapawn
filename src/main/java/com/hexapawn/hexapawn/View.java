@@ -19,15 +19,17 @@ public class View {
             for (int col = 0; col < board.getCols(); col++) {
                 Button button = new Button();
                 button.setMinSize(80, 80);
-                updateButton(button, row, col);
                 gridPane.add(button, row, col);
                 buttons[row][col] = button;
+
+                Pawn pawn = board.getPawn(row, col);
+                updateButton(row, col, pawn);
             }
         }
     }
 
-    private void updateButton(Button button, int row, int col) {
-        Pawn pawn = board.getPawn(row, col);
+    public void updateButton(int row, int col, Pawn pawn) {
+        Button button = buttons[row][col];
         if (pawn == null) {
             button.setText("");
         } else {

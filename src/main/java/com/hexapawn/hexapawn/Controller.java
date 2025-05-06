@@ -26,7 +26,59 @@ public class Controller {
         }
     }
 
-    private void handleClick(int r, int c) {
-        System.out.println("Clicked: " + c + ", " + r);
+    private void handleClick(int row, int col) {
+        Pawn clickedPawn = board.getPawn(row, col);
+
+        if (selectedRow == -1 && selectedCol == -1) {
+            if (clickedPawn != null && clickedPawn.getPlayer() == currentPlayer) {
+                selectedRow = row;
+                selectedCol = col;
+                System.out.println("Selected pawn at (" + row + ", " + col + ")");
+            } else {
+                System.out.println("You must select a pawn first");
+            }
+        } else {
+            if (clickedPawn == null) {
+                board.movePawn(selectedRow, selectedCol, row, col);
+                view.updateButton(selectedRow, selectedCol, null);
+                view.updateButton(row, col, board.getPawn(row, col));
+                System.out.println("Moved to (" + row + ", " + col + ")");
+
+                currentPlayer = (currentPlayer == 1) ? 2 : 1;
+            } else {
+                System.out.println("Cannot move to non-empty spot!");
+            }
+
+            selectedRow = -1;
+            selectedCol = -1;
+        }
+    }
+
+    private boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol) {
+        Pawn pawn = board.getPawn(fromRow, fromCol);
+        if (pawn == null) {
+            return false;
+        }
+
+        int direction = (pawn.getPlayer() == 1) ? 1 : -1;
+        int rowDiff = toRow - fromRow;
+        int colDiff = Math.abs(toCol - fromCol);
+
+        Pawn target = board.getPawn(toRow, toCol);
+
+        // Forward move to empty square
+        if (colDiff == 0 && rowDiff == direction && target == null) {
+            return true;
+        }
+
+        // Diagonal capture
+        if (colDiff == 1
+                && rowDiff == direction
+                && target != null
+                && target.getPlayer() != pawn.getPlayer()) {
+            return true;
+        }
+
+        return false;
     }
 }
