@@ -18,7 +18,14 @@ public class View {
         for (int row = 0; row < board.getRows(); row++) {
             for (int col = 0; col < board.getCols(); col++) {
                 Button button = new Button();
-                button.setMinSize(80, 80);
+
+                if ((row + col) % 2 == 0) {
+                    button.setStyle("-fx-background-color: lightgray; -fx-font-size: 40");
+                } else {
+                    button.setStyle("-fx-background-color: darkgray; -fx-font-size: 40");
+                }
+
+                button.setPrefSize(100, 100);
                 gridPane.add(button, col, row);
                 buttons[row][col] = button;
 
@@ -33,7 +40,7 @@ public class View {
         if (pawn == null) {
             button.setText("");
         } else {
-            button.setText(pawn.getPlayer() == 1 ? "W" : "B");
+            button.setText(pawn.getPlayer() == 1 ? "♙" : "♟");
         }
     }
 
