@@ -33,6 +33,8 @@ public class Controller {
             if (clickedPawn != null && clickedPawn.getPlayer() == currentPlayer) {
                 selectedRow = row;
                 selectedCol = col;
+                view.highlightButton(row, col);
+
                 System.out.println("Selected pawn at (" + row + ", " + col + ")");
             } else {
                 System.out.println("You must select a pawn first");
@@ -45,10 +47,13 @@ public class Controller {
                 System.out.println("Moved to (" + row + ", " + col + ")");
 
                 currentPlayer = (currentPlayer == 1) ? 2 : 1;
+                view.getStatusLabel().setText("Player " + currentPlayer + "'s turn");
+
             } else {
                 System.out.println("Cannot move to non-empty spot!");
             }
 
+            view.clearHighlights();
             selectedRow = -1;
             selectedCol = -1;
         }
