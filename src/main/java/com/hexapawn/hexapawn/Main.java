@@ -2,7 +2,6 @@ package com.hexapawn.hexapawn;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -12,10 +11,7 @@ public class Main extends Application {
         View view = new View(board);
         Controller controller = new Controller(board, view);
 
-        VBox root = new VBox();
-        root.getChildren().addAll(view.getStatusLabel(), view.getGridPane());
-
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(view.getRoot(), 300, 400);
         stage.setScene(scene);
         stage.setTitle("Hexapawn");
         stage.show();

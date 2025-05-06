@@ -16,10 +16,20 @@ public class Board {
     }
 
     private void initializeBoard() {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                board[row][col] = null;
+            }
+        }
+
         for (int col = 0; col < cols; col++) {
             board[0][col] = new Pawn(2);
             board[rows - 1][col] = new Pawn(1);
         }
+    }
+
+    public void resetBoard() {
+        initializeBoard();
     }
 
     public Pawn getPawn(int row, int col) {

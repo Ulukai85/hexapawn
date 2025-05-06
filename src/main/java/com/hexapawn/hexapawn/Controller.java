@@ -25,6 +25,18 @@ public class Controller {
                 button.setOnAction(event -> handleClick(r, c));
             }
         }
+        view.getTwoPlayerButton().setOnAction(event -> startTwoPlayerGame());
+        view.getRandomAIButton().setOnAction(event -> System.out.println("Not implemented yet"));
+        view.getMinimaxAIButton().setOnAction(event -> System.out.println("Not implemented yet"));
+    }
+
+    private void startTwoPlayerGame() {
+        currentPlayer = 1;
+        gameOver = false;
+        board.resetBoard();
+        view.drawBoard();
+        view.showNextPlayer(currentPlayer);
+        addEventHandlers();
     }
 
     private void handlePawnSelection(Pawn pawn, int row, int col) {

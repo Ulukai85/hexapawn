@@ -1,23 +1,74 @@
 package com.hexapawn.hexapawn;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class View {
-    private final GridPane gridPane = new GridPane();
-    private final Board board;
-    private final Button[][] buttons;
-    private Label statusLabel = new Label("Player 1's turn");
+    private VBox root;
+    private GridPane gridPane;
+    private Board board;
+    private Button[][] buttons;
+    private Label statusLabel;
+    private Button twoPlayerButton;
+    private Button randomAIButton;
+    private Button minimaxAIButton;
 
     public View(Board board) {
         this.board = board;
         buttons = new Button[board.getRows()][board.getCols()];
+
+        root = new VBox(10);
+        root.setAlignment(Pos.CENTER);
+
+        statusLabel = new Label("Player 1's turn");
+
+        HBox modeButtons = new HBox(10);
+        modeButtons.setAlignment(Pos.CENTER);
+
+        twoPlayerButton = new Button("2-Player Game");
+        randomAIButton = new Button("Random AI");
+        minimaxAIButton = new Button("Minimax AI");
+
+        modeButtons.getChildren().addAll(twoPlayerButton, randomAIButton, minimaxAIButton);
+
+        gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+
         drawBoard();
+
+        root.getChildren().addAll(statusLabel, modeButtons, gridPane);
+    }
+
+    public VBox getRoot() {
+        return root;
+    }
+
+    public GridPane getGridPane() {
+        return gridPane;
+    }
+
+    public Button getButton(int row, int col) {
+        return buttons[row][col];
     }
 
     public Label getStatusLabel() {
         return statusLabel;
+    }
+
+    public Button getTwoPlayerButton() {
+        return twoPlayerButton;
+    }
+
+    public Button getRandomAIButton() {
+        return randomAIButton;
+    }
+
+    public Button getMinimaxAIButton() {
+        return minimaxAIButton;
     }
 
     public void showWinner(int player) {
@@ -36,7 +87,7 @@ public class View {
         }
     }
 
-    private void drawBoard() {
+    public void drawBoard() {
         for (int row = 0; row < board.getRows(); row++) {
             for (int col = 0; col < board.getCols(); col++) {
                 Button button = new Button();
@@ -78,13 +129,5 @@ public class View {
                 }
             }
         }
-    }
-
-    public GridPane getGridPane() {
-        return gridPane;
-    }
-
-    public Button getButton(int row, int col) {
-        return buttons[row][col];
     }
 }
