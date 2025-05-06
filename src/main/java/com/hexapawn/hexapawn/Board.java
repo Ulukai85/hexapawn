@@ -14,8 +14,8 @@ public class Board {
 
     private void initializeBoard() {
         for (int col = 0; col < cols; col++) {
-            board[col][rows - 1] = new Pawn(1);
-            board[col][0] = new Pawn(2);
+            board[0][col] = new Pawn(2);
+            board[rows - 1][col] = new Pawn(1);
         }
     }
 

@@ -19,7 +19,7 @@ public class View {
             for (int col = 0; col < board.getCols(); col++) {
                 Button button = new Button();
                 button.setMinSize(80, 80);
-                gridPane.add(button, row, col);
+                gridPane.add(button, col, row);
                 buttons[row][col] = button;
 
                 Pawn pawn = board.getPawn(row, col);

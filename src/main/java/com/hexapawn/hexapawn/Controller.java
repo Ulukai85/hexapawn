@@ -38,7 +38,7 @@ public class Controller {
                 System.out.println("You must select a pawn first");
             }
         } else {
-            if (clickedPawn == null) {
+            if (isValidMove(selectedRow, selectedCol, row, col)) {
                 board.movePawn(selectedRow, selectedCol, row, col);
                 view.updateButton(selectedRow, selectedCol, null);
                 view.updateButton(row, col, board.getPawn(row, col));
@@ -60,11 +60,14 @@ public class Controller {
             return false;
         }
 
-        int direction = (pawn.getPlayer() == 1) ? 1 : -1;
+        int direction = (pawn.getPlayer() == 1) ? -1 : 1;
         int rowDiff = toRow - fromRow;
         int colDiff = Math.abs(toCol - fromCol);
 
         Pawn target = board.getPawn(toRow, toCol);
+
+        System.out.println("Moved to (" + toRow + ", " + toCol + ")");
+        System.out.println("Direction: " + direction + ", RowDiff: " + rowDiff + ", ColDiff: " + colDiff);
 
         // Forward move to empty square
         if (colDiff == 0 && rowDiff == direction && target == null) {
