@@ -20,6 +20,14 @@ public class View {
         return statusLabel;
     }
 
+    public void showWinner(int player) {
+        getStatusLabel().setText("Player " + player + " wins!");
+    }
+
+    public void showNextPlayer(int player) {
+        getStatusLabel().setText("Player " + player + "'s turn");
+    }
+
     private void setDefaultStyling(Button button, int row, int col) {
         if ((row + col) % 2 == 0) {
             button.setStyle("-fx-background-color: lightgray; -fx-font-size: 40");

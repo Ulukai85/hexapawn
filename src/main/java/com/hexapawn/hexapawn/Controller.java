@@ -8,6 +8,7 @@ public class Controller {
     private int currentPlayer = 1;
     private int selectedRow = -1;
     private int selectedCol = -1;
+    private boolean gameOver = false;
 
     public Controller(Board board, View view) {
         this.board = board;
@@ -26,36 +27,56 @@ public class Controller {
         }
     }
 
+    private void handlePawnSelection(Pawn pawn, int row, int col) {
+        if (pawn != null && pawn.getPlayer() == currentPlayer) {
+            selectedRow = row;
+            selectedCol = col;
+            view.highlightButton(row, col);
+
+            System.out.println("Selected pawn at (" + row + ", " + col + ")");
+        } else {
+            System.out.println("You must select a pawn first");
+        }
+    }
+
+    private void handlePawnMove(int row, int col) {
+        if (isValidMove(selectedRow, selectedCol, row, col)) {
+            board.movePawn(selectedRow, selectedCol, row, col);
+            view.updateButton(selectedRow, selectedCol, null);
+            view.updateButton(row, col, board.getPawn(row, col));
+            System.out.println("Moved to (" + row + ", " + col + ")");
+
+            GameState state = board.evaluateGameState(currentPlayer);
+            if (state == GameState.WIN) {
+                view.showWinner(currentPlayer);
+                gameOver = true;
+            } else if (state == GameState.LOSS) {
+                view.showWinner(3 - currentPlayer);
+                gameOver = true;
+            } else {
+                currentPlayer = 3 - currentPlayer ;
+                view.showNextPlayer(currentPlayer);
+            }
+
+        } else {
+            System.out.println("Cannot move to non-empty spot!");
+        }
+
+        view.clearHighlights();
+        selectedRow = -1;
+        selectedCol = -1;
+    }
+
     private void handleClick(int row, int col) {
+        if (gameOver) {
+            return;
+        }
         Pawn clickedPawn = board.getPawn(row, col);
 
         if (selectedRow == -1 && selectedCol == -1) {
-            if (clickedPawn != null && clickedPawn.getPlayer() == currentPlayer) {
-                selectedRow = row;
-                selectedCol = col;
-                view.highlightButton(row, col);
-
-                System.out.println("Selected pawn at (" + row + ", " + col + ")");
-            } else {
-                System.out.println("You must select a pawn first");
-            }
+            handlePawnSelection(clickedPawn, row, col);
         } else {
-            if (isValidMove(selectedRow, selectedCol, row, col)) {
-                board.movePawn(selectedRow, selectedCol, row, col);
-                view.updateButton(selectedRow, selectedCol, null);
-                view.updateButton(row, col, board.getPawn(row, col));
-                System.out.println("Moved to (" + row + ", " + col + ")");
-
-                currentPlayer = (currentPlayer == 1) ? 2 : 1;
-                view.getStatusLabel().setText("Player " + currentPlayer + "'s turn");
-
-            } else {
-                System.out.println("Cannot move to non-empty spot!");
-            }
-
-            view.clearHighlights();
-            selectedRow = -1;
-            selectedCol = -1;
+            handlePawnMove(row, col);
         }
     }
 
@@ -80,13 +101,9 @@ public class Controller {
         }
 
         // Diagonal capture
-        if (colDiff == 1
+        return colDiff == 1
                 && rowDiff == direction
                 && target != null
-                && target.getPlayer() != pawn.getPlayer()) {
-            return true;
-        }
-
-        return false;
+                && target.getPlayer() != pawn.getPlayer();
     }
 }
