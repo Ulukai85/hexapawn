@@ -40,10 +40,10 @@ public class Board {
         board[row][col] = pawn;
     }
 
-    public void movePawn(int fromRow, int fromCol, int toRow, int toCol) {
-        Pawn pawn = getPawn(fromRow, fromCol);
-        setPawn(toRow, toCol, pawn);
-        setPawn(fromRow, fromCol, null);
+    public void movePawn(Move move) {
+        Pawn pawn = getPawn(move.fromRow, move.fromCol);
+        setPawn(move.toRow, move.toCol, pawn);
+        setPawn(move.fromRow, move.fromCol, null);
     }
 
     public int getRows() {

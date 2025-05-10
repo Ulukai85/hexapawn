@@ -2,6 +2,9 @@ package com.hexapawn.hexapawn;
 
 import javafx.scene.control.Button;
 
+import java.util.List;
+import java.util.Random;
+
 public class Controller {
     private final Board board;
     private final View view;
@@ -9,6 +12,8 @@ public class Controller {
     private int selectedRow = -1;
     private int selectedCol = -1;
     private boolean gameOver = false;
+    private boolean player2IsRandomAI = false;
+    private boolean player2IsMiniMaxAI = false;
 
     public Controller(Board board, View view) {
         this.board = board;
@@ -26,17 +31,63 @@ public class Controller {
             }
         }
         view.getTwoPlayerButton().setOnAction(event -> startTwoPlayerGame());
-        view.getRandomAIButton().setOnAction(event -> System.out.println("Not implemented yet"));
-        view.getMinimaxAIButton().setOnAction(event -> System.out.println("Not implemented yet"));
+        view.getRandomAIButton().setOnAction(event -> startRandomAIGame());
+        view.getMinimaxAIButton().setOnAction(event -> startMinimaxAIGame());
     }
 
-    private void startTwoPlayerGame() {
+    private void setupNewGame() {
         currentPlayer = 1;
         gameOver = false;
         board.resetBoard();
         view.drawBoard();
         view.showNextPlayer(currentPlayer);
+        player2IsRandomAI = false;
+        player2IsMiniMaxAI = false;
+
         addEventHandlers();
+    }
+
+    private void startMinimaxAIGame() {
+        setupNewGame();
+        player2IsMiniMaxAI = true;
+    }
+
+    private void startRandomAIGame() {
+        setupNewGame();
+        player2IsRandomAI = true;
+    }
+
+    private void startTwoPlayerGame() {
+        setupNewGame();
+
+    }
+
+    private void makeMiniMaxAIMove() {
+
+    }
+
+    private void makeRandomAIMove() {
+        List<Move> moves = board.getAllPossibleMoves(2);
+
+        if (moves.isEmpty()) {
+            view.showWinner(1); // Player 1 wins
+            gameOver = true;
+            return;
+        }
+
+        Move move = moves.get(new Random().nextInt(moves.size()));
+        board.movePawn(move);
+
+        view.updateButton(move.fromRow, move.fromCol, null);
+        view.updateButton(move.toRow, move.toCol, board.getPawn(move.toRow, move.toCol));
+
+        checkWinConditions();
+        if (gameOver) {
+            return;
+        }
+
+        currentPlayer = 1;
+        view.showNextPlayer(currentPlayer);
     }
 
     private void handlePawnSelection(Pawn pawn, int row, int col) {
@@ -51,23 +102,34 @@ public class Controller {
         }
     }
 
+    private void checkWinConditions() {
+        GameState state = board.evaluateGameState(currentPlayer);
+        if (state == GameState.WIN) {
+            view.showWinner(currentPlayer);
+            gameOver = true;
+        } else if (state == GameState.LOSS) {
+            view.showWinner(3 - currentPlayer);
+            gameOver = true;
+        }
+    }
+
     private void handlePawnMove(int row, int col) {
         if (isValidMove(selectedRow, selectedCol, row, col)) {
-            board.movePawn(selectedRow, selectedCol, row, col);
+            Move move = new Move(selectedRow, selectedCol, row, col);
+            board.movePawn(move);
             view.updateButton(selectedRow, selectedCol, null);
             view.updateButton(row, col, board.getPawn(row, col));
             System.out.println("Moved to (" + row + ", " + col + ")");
 
-            GameState state = board.evaluateGameState(currentPlayer);
-            if (state == GameState.WIN) {
-                view.showWinner(currentPlayer);
-                gameOver = true;
-            } else if (state == GameState.LOSS) {
-                view.showWinner(3 - currentPlayer);
-                gameOver = true;
-            } else {
-                currentPlayer = 3 - currentPlayer ;
-                view.showNextPlayer(currentPlayer);
+            checkWinConditions();
+            if (gameOver) {
+                return;
+            }
+
+            currentPlayer = 3 - currentPlayer ;
+            view.showNextPlayer(currentPlayer);
+            if (currentPlayer == 2 && player2IsRandomAI) {
+                makeRandomAIMove();
             }
 
         } else {
