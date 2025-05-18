@@ -7,8 +7,9 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
-        int ROWS = 4;
-        int COLS = 4;
+        int SIZE = 3;
+        int ROWS = SIZE;
+        int COLS = SIZE;
         Board board = new Board(ROWS, COLS);
         View view = new View(board);
         Controller controller = new Controller(board, view);

@@ -45,6 +45,28 @@ public class Board {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                Pawn pawn = board[row][col];
+                if (pawn == null) {
+                    sb.append(" ");
+                } else if (pawn.getPlayer() == 1) {
+                    sb.append("w");
+                } else if (pawn.getPlayer() == 2) {
+                    sb.append("b");
+                }
+                if (col < cols - 1) {
+                    sb.append("|");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     public void resetBoard() {
         initializeBoard();
     }

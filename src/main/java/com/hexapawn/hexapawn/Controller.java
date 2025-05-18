@@ -78,7 +78,7 @@ public class Controller {
         for (Move move : moves) {
             Board copy = new Board(board);
             copy.movePawn(move);
-            int score = minimax(copy, 1, false); // now Player 1's turn
+            int score = minimax(copy, 1, false, 1); // now Player 1's turn
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = move;
@@ -99,18 +99,27 @@ public class Controller {
         view.showNextPlayer(currentPlayer);
     }
 
-    private int minimax(Board board, int player, boolean isMax) {
-        GameState state = board.evaluateGameState(1);
+    private int minimax(Board board, int player, boolean isMax, int depth) {
+        GameState state = board.evaluateGameState(player);
+
+        System.out.println("Depth: " + depth + ", Player: " + player + ", isMax: " + isMax);
+        System.out.println(board);
 
         if (state == GameState.WIN) {
-            return 1;
+            int score = (player == 2) ? 10 : -10;
+            System.out.println(("WIN detected at depth " + depth + ", score: " + score));
+            return score;
         } else if (state == GameState.LOSS) {
-            return -1;
+            int score = (player == 2) ? -10 : 10;
+            System.out.println("LOSS detected at depth " + depth + ", score: " + score);
+            return score;
         }
 
         List<Move> moves = board.getAllPossibleMoves(player);
         if (moves.isEmpty()) {
-            return player == 1 ? -1 : 1;
+            int score = (player == 2) ? 10 : -10;
+            System.out.println("No moves at depth " + depth + ", score: " + score);
+            return score;
         }
 
         int bestScore = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
@@ -119,7 +128,7 @@ public class Controller {
             Board copy = new Board(board);
             copy.movePawn(move);
 
-            int score = minimax(copy, 3 - player, !isMax);
+            int score = minimax(copy, 3 - player, !isMax, depth + 1);
             if (isMax) {
                 bestScore = Math.max(bestScore, score);
             } else {
@@ -127,6 +136,7 @@ public class Controller {
             }
         }
 
+        System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
         return bestScore;
     }
 
