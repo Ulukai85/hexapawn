@@ -62,8 +62,96 @@ public class Controller {
 
     }
 
-    private void makeMiniMaxAIMove() {
 
+    private void makeMiniMaxAIMove() {
+        List<Move> moves = board.getAllPossibleMoves(2);
+
+        if (moves.isEmpty()) {
+            view.showWinner(1);
+            gameOver = true;
+            return;
+        }
+
+        Move bestMove = null;
+        int bestScore = Integer.MIN_VALUE;
+
+        for (Move move : moves) {
+            Board copy = new Board(board);
+            copy.movePawn(move);
+            int score = minimax(copy, 1, false); // now Player 1's turn
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+
+        board.movePawn(bestMove);
+
+        view.updateButton(bestMove.fromRow, bestMove.fromCol, null);
+        view.updateButton(bestMove.toRow, bestMove.toCol, board.getPawn(bestMove.toRow, bestMove.toCol));
+
+        checkWinConditions();
+        if (gameOver) {
+            return;
+        }
+
+        currentPlayer = 1;
+        view.showNextPlayer(currentPlayer);
+    }
+
+    private int minimax(Board board, int player, boolean isMax) {
+        GameState state = board.evaluateGameState(1);
+
+        if (state == GameState.WIN) {
+            return 1;
+        } else if (state == GameState.LOSS) {
+            return -1;
+        }
+
+        List<Move> moves = board.getAllPossibleMoves(player);
+        if (moves.isEmpty()) {
+            return player == 1 ? -1 : 1;
+        }
+
+        int bestScore = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+        for (Move move : moves) {
+            Board copy = new Board(board);
+            copy.movePawn(move);
+
+            int score = minimax(copy, 3 - player, !isMax);
+            if (isMax) {
+                bestScore = Math.max(bestScore, score);
+            } else {
+                bestScore = Math.min(bestScore, score);
+            }
+        }
+
+        return bestScore;
+    }
+
+    private void makeFirstMoveFromList() {
+        List<Move> moves = board.getAllPossibleMoves(2);
+
+        if (moves.isEmpty()) {
+            view.showWinner(1); // Player 1 wins
+            gameOver = true;
+            return;
+        }
+
+        Move move = moves.getFirst();
+        board.movePawn(move);
+
+        view.updateButton(move.fromRow, move.fromCol, null);
+        view.updateButton(move.toRow, move.toCol, board.getPawn(move.toRow, move.toCol));
+
+        checkWinConditions();
+        if (gameOver) {
+            return;
+        }
+
+        currentPlayer = 1;
+        view.showNextPlayer(currentPlayer);
     }
 
     private void makeRandomAIMove() {
@@ -130,6 +218,9 @@ public class Controller {
             view.showNextPlayer(currentPlayer);
             if (currentPlayer == 2 && player2IsRandomAI) {
                 makeRandomAIMove();
+            } else if (currentPlayer == 2 && player2IsMiniMaxAI) {
+                makeMiniMaxAIMove();
+
             }
 
         } else {

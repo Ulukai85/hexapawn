@@ -15,6 +15,23 @@ public class Board {
         initializeBoard();
     }
 
+    public Board(Board other) {
+        this.rows = other.rows;
+        this.cols = other.cols;
+        this.board = new Pawn[rows][cols];
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                Pawn pawn = other.getPawn(row, col);
+                if (pawn != null) {
+                    this.board[row][col] = new Pawn(pawn.getPlayer());
+                } else {
+                    this.board[row][col] = null;
+                }
+            }
+        }
+    }
+
     private void initializeBoard() {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {

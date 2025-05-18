@@ -7,11 +7,13 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
-        Board board = new Board(3, 3);
+        int ROWS = 4;
+        int COLS = 4;
+        Board board = new Board(ROWS, COLS);
         View view = new View(board);
         Controller controller = new Controller(board, view);
 
-        Scene scene = new Scene(view.getRoot(), 300, 400);
+        Scene scene = new Scene(view.getRoot(), ROWS * 100, COLS * 100 + 100);
         stage.setScene(scene);
         stage.setTitle("Hexapawn");
         stage.show();
