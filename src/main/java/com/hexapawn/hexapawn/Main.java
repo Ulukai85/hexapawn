@@ -10,7 +10,7 @@ public class Main extends Application {
         int SIZE = 3;
         int ROWS = SIZE;
         int COLS = SIZE;
-        int MAX_DEPTH = 5;
+        int MAX_DEPTH = 6;
         Board board = new Board(ROWS, COLS);
         View view = new View(board);
         Controller controller = new Controller(board, view, MAX_DEPTH);

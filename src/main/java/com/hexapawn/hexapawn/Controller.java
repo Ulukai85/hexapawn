@@ -126,12 +126,13 @@ public class Controller {
             return score;
         }
 
+        if (depth >= maxDepth) {
+            return 0;
+        }
 
         if (isMax) {
             int bestScore = Integer.MIN_VALUE;
-            if (depth >= maxDepth) {
-                return bestScore;
-            }
+
             for (Move move : moves) {
                 Board copy = new Board(board);
                 copy.movePawn(move);
@@ -143,9 +144,7 @@ public class Controller {
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
-            if (depth >= maxDepth) {
-                return bestScore;
-            }
+
             for (Move move : moves) {
                 Board copy = new Board(board);
                 copy.movePawn(move);
