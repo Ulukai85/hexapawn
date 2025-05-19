@@ -97,9 +97,6 @@ public class Board {
         if (hasPawnAtEnd(currentPlayer)) {
             return GameState.WIN;
         }
-//        if (hasNoMoves(3 - currentPlayer)) {
-//            return GameState.WIN;
-//        }
         if (hasPawnAtEnd(3 - currentPlayer)) {
             return GameState.LOSS;
         }

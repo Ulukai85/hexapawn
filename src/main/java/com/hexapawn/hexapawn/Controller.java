@@ -14,10 +14,12 @@ public class Controller {
     private boolean gameOver = false;
     private boolean player2IsRandomAI = false;
     private boolean player2IsMiniMaxAI = false;
+    private int maxDepth;
 
-    public Controller(Board board, View view) {
+    public Controller(Board board, View view, int maxDepth) {
         this.board = board;
         this.view = view;
+        this.maxDepth = maxDepth;
         addEventHandlers();
     }
 
@@ -80,7 +82,6 @@ public class Controller {
         return bestMove;
     }
 
-
     private void makeMiniMaxAIMove() {
 
         Move bestMove = getBestMove();
@@ -107,19 +108,20 @@ public class Controller {
 //        System.out.println("Depth: " + depth + ", Player: " + player + ", isMax: " + isMax);
 //        System.out.println(board);
 
+        int score = 10 - depth;
         if (state == GameState.WIN) {
-            int score = (player == 2) ? 10 : -10;
+            score = (player == 2) ? score : -score;
 //            System.out.println(("WIN detected at depth " + depth + ", score: " + score));
             return score;
         } else if (state == GameState.LOSS) {
-            int score = (player == 2) ? -10 : 10;
+            score = (player == 2) ? -score : score;
 //            System.out.println("LOSS detected at depth " + depth + ", score: " + score);
             return score;
         }
 
         List<Move> moves = board.getAllPossibleMoves(player);
         if (moves.isEmpty()) {
-            int score = (player == 2) ? -10 : 10;
+            score = (player == 2) ? -score : score;
 //            System.out.println("No moves at depth " + depth + ", score: " + score);
             return score;
         }
@@ -127,20 +129,27 @@ public class Controller {
 
         if (isMax) {
             int bestScore = Integer.MIN_VALUE;
+            if (depth >= maxDepth) {
+                return bestScore;
+            }
             for (Move move : moves) {
                 Board copy = new Board(board);
                 copy.movePawn(move);
-                int score = minimax(copy, 3 - player, false, depth + 1);
+
+                score = minimax(copy, 3 - player, false, depth + 1);
                 bestScore = Math.max(bestScore, score);
             }
 //            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
+            if (depth >= maxDepth) {
+                return bestScore;
+            }
             for (Move move : moves) {
                 Board copy = new Board(board);
                 copy.movePawn(move);
-                int score = minimax(copy, 3 - player, true, depth + 1);
+                score = minimax(copy, 3 - player, true, depth + 1);
                 bestScore = Math.min(bestScore, score);
             }
 //            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
@@ -232,7 +241,6 @@ public class Controller {
                 makeRandomAIMove();
             } else if (currentPlayer == 2 && player2IsMiniMaxAI) {
                 makeMiniMaxAIMove();
-
             }
 
         } else {

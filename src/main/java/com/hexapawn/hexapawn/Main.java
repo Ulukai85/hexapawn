@@ -7,12 +7,13 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
-        int SIZE = 3;
+        int SIZE = 5;
         int ROWS = SIZE;
         int COLS = SIZE;
+        int MAX_DEPTH = 5;
         Board board = new Board(ROWS, COLS);
         View view = new View(board);
-        Controller controller = new Controller(board, view);
+        Controller controller = new Controller(board, view, MAX_DEPTH);
 
         Scene scene = new Scene(view.getRoot(), ROWS * 100, COLS * 100 + 100);
         stage.setScene(scene);
