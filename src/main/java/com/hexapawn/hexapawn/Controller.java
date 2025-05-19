@@ -62,15 +62,8 @@ public class Controller {
 
     }
 
-
-    private void makeMiniMaxAIMove() {
+    private Move getBestMove() {
         List<Move> moves = board.getAllPossibleMoves(2);
-
-        if (moves.isEmpty()) {
-            view.showWinner(1);
-            gameOver = true;
-            return;
-        }
 
         Move bestMove = null;
         int bestScore = Integer.MIN_VALUE;
@@ -84,60 +77,75 @@ public class Controller {
                 bestMove = move;
             }
         }
+        return bestMove;
+    }
+
+
+    private void makeMiniMaxAIMove() {
+
+        Move bestMove = getBestMove();
 
         board.movePawn(bestMove);
 
         view.updateButton(bestMove.fromRow, bestMove.fromCol, null);
         view.updateButton(bestMove.toRow, bestMove.toCol, board.getPawn(bestMove.toRow, bestMove.toCol));
 
+        currentPlayer = 1;
+
         checkWinConditions();
         if (gameOver) {
             return;
         }
 
-        currentPlayer = 1;
         view.showNextPlayer(currentPlayer);
     }
+
 
     private int minimax(Board board, int player, boolean isMax, int depth) {
         GameState state = board.evaluateGameState(player);
 
-        System.out.println("Depth: " + depth + ", Player: " + player + ", isMax: " + isMax);
-        System.out.println(board);
+//        System.out.println("Depth: " + depth + ", Player: " + player + ", isMax: " + isMax);
+//        System.out.println(board);
 
         if (state == GameState.WIN) {
             int score = (player == 2) ? 10 : -10;
-            System.out.println(("WIN detected at depth " + depth + ", score: " + score));
+//            System.out.println(("WIN detected at depth " + depth + ", score: " + score));
             return score;
         } else if (state == GameState.LOSS) {
             int score = (player == 2) ? -10 : 10;
-            System.out.println("LOSS detected at depth " + depth + ", score: " + score);
+//            System.out.println("LOSS detected at depth " + depth + ", score: " + score);
             return score;
         }
 
         List<Move> moves = board.getAllPossibleMoves(player);
         if (moves.isEmpty()) {
-            int score = (player == 2) ? 10 : -10;
-            System.out.println("No moves at depth " + depth + ", score: " + score);
+            int score = (player == 2) ? -10 : 10;
+//            System.out.println("No moves at depth " + depth + ", score: " + score);
             return score;
         }
 
-        int bestScore = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
-        for (Move move : moves) {
-            Board copy = new Board(board);
-            copy.movePawn(move);
-
-            int score = minimax(copy, 3 - player, !isMax, depth + 1);
-            if (isMax) {
+        if (isMax) {
+            int bestScore = Integer.MIN_VALUE;
+            for (Move move : moves) {
+                Board copy = new Board(board);
+                copy.movePawn(move);
+                int score = minimax(copy, 3 - player, false, depth + 1);
                 bestScore = Math.max(bestScore, score);
-            } else {
+            }
+//            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+            for (Move move : moves) {
+                Board copy = new Board(board);
+                copy.movePawn(move);
+                int score = minimax(copy, 3 - player, true, depth + 1);
                 bestScore = Math.min(bestScore, score);
             }
+//            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
+            return bestScore;
         }
-
-        System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
-        return bestScore;
     }
 
     private void makeFirstMoveFromList() {
@@ -167,24 +175,18 @@ public class Controller {
     private void makeRandomAIMove() {
         List<Move> moves = board.getAllPossibleMoves(2);
 
-        if (moves.isEmpty()) {
-            view.showWinner(1); // Player 1 wins
-            gameOver = true;
-            return;
-        }
-
         Move move = moves.get(new Random().nextInt(moves.size()));
         board.movePawn(move);
 
         view.updateButton(move.fromRow, move.fromCol, null);
         view.updateButton(move.toRow, move.toCol, board.getPawn(move.toRow, move.toCol));
 
+        currentPlayer = 1;
+
         checkWinConditions();
         if (gameOver) {
             return;
         }
-
-        currentPlayer = 1;
         view.showNextPlayer(currentPlayer);
     }
 
@@ -219,12 +221,12 @@ public class Controller {
             view.updateButton(row, col, board.getPawn(row, col));
             System.out.println("Moved to (" + row + ", " + col + ")");
 
+            currentPlayer = 3 - currentPlayer ;
+
             checkWinConditions();
             if (gameOver) {
                 return;
             }
-
-            currentPlayer = 3 - currentPlayer ;
             view.showNextPlayer(currentPlayer);
             if (currentPlayer == 2 && player2IsRandomAI) {
                 makeRandomAIMove();
@@ -243,9 +245,7 @@ public class Controller {
     }
 
     private void handleClick(int row, int col) {
-        if (gameOver) {
-            return;
-        }
+
         Pawn clickedPawn = board.getPawn(row, col);
 
         if (selectedRow == -1 && selectedCol == -1) {
