@@ -1,5 +1,7 @@
 # Hexapawn
 
+![Hexapawn Screenshot](thumbnail.jpg)
+
 A simple JavaFX implementation of the Hexapawn game with support for:
 - Two-player mode
 - Random AI opponent

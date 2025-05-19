@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
-        int SIZE = 5;
+        int SIZE = 3;
         int ROWS = SIZE;
         int COLS = SIZE;
         int MAX_DEPTH = 5;
