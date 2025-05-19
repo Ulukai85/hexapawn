@@ -105,24 +105,18 @@ public class Controller {
     private int minimax(Board board, int player, boolean isMax, int depth) {
         GameState state = board.evaluateGameState(player);
 
-//        System.out.println("Depth: " + depth + ", Player: " + player + ", isMax: " + isMax);
-//        System.out.println(board);
-
         int score = 10 - depth;
         if (state == GameState.WIN) {
             score = (player == 2) ? score : -score;
-//            System.out.println(("WIN detected at depth " + depth + ", score: " + score));
             return score;
         } else if (state == GameState.LOSS) {
             score = (player == 2) ? -score : score;
-//            System.out.println("LOSS detected at depth " + depth + ", score: " + score);
             return score;
         }
 
         List<Move> moves = board.getAllPossibleMoves(player);
         if (moves.isEmpty()) {
             score = (player == 2) ? -score : score;
-//            System.out.println("No moves at depth " + depth + ", score: " + score);
             return score;
         }
 
@@ -140,7 +134,6 @@ public class Controller {
                 score = minimax(copy, 3 - player, false, depth + 1);
                 bestScore = Math.max(bestScore, score);
             }
-//            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
@@ -151,7 +144,6 @@ public class Controller {
                 score = minimax(copy, 3 - player, true, depth + 1);
                 bestScore = Math.min(bestScore, score);
             }
-//            System.out.println("Returning bestScore " + bestScore + " at depth " + depth);
             return bestScore;
         }
     }
